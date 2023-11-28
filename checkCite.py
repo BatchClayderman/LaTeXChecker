@@ -400,7 +400,7 @@ def main() -> int:
 	while True:
 		clearScreen()
 		latex_folder = input("Please input your LaTeX folder (Input \"/\" and enter to exit): ").replace("\"", "")
-		if latex_folder in ("\", "/", ":", "*", "?", "<", ">", "|"):
+		if latex_folder in ("\\", "/", ":", "*", "?", "<", ">", "|"):
 			break
 		elif os.path.isdir(latex_folder):
 			mainBoard(latex_folder)
