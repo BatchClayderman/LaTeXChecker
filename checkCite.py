@@ -22,6 +22,14 @@ def getTxt(filepath, index = 0) -> str: # get .txt content
 	else:
 		return None # out of range
 
+def removeCommentLine(text) -> str: # remove comment lines
+	lines = text.split("\n")
+	for i, line in enumerate(lines):
+		for j in range(len(line)):
+			if line[j] == "%" and (0 == j or line[j - 1] != "\\"):
+				lines[i] = lines[i][:j]
+	return "\n".join(lines)
+
 def clearScreen(fakeClear = 120):
 	if sys.stdin.isatty(): # is at a console
 		if platform.system().lower() == "windows":
@@ -90,12 +98,12 @@ def checkLabels(texFilepaths, isDebug = False) -> bool:
 		if text is None:
 			print("Read tex file \"{0}\" failed. ".format(texFilepath))
 		else:
-			content += text + "\n"
-	labels = [item[item.index("{") + 1:-1].replace(" ", "").replace("\t", "") for item in findall("\\\\label\\{.+?\\}", content)]
-	refs = [item[item.index("{") + 1:-1].replace(" ", "").replace("\t", "") for item in findall("\\\\ref\\{.+?\\}", content)] + [item[item.index("{") + 1:-1].replace(" ", "").replace("\t", "") for item in findall("\\\\eqref\\{.+?\\}", content)]
+			content += removeCommentLine(text) + "\n"
+	labels = [item[item.index("{") + 1:-1] for item in findall("\\\\label\\{.+?\\}", content)]
+	refs = [item[item.index("{") + 1:-1] for item in findall("\\\\ref\\{.+?\\}", content)] + [item[item.index("{") + 1:-1] for item in findall("\\\\eqref\\{.+?\\}", content)]
 	for i in range(len(refs) - 1, -1, -1):
 		if "," in refs[i]:
-			refs += refs[i].split(",")
+			refs += [item.strip() for item in refs[i].split(",")]
 			del refs[i]
 	if isDebug:
 		print("labels =", labels)
@@ -162,11 +170,11 @@ def checkCitations(texFilepaths, isDebug = False) -> bool:
 		if text is None:
 			print("Read tex file \"{0}\" failed. ".format(texFilepath))
 		else:
-			content += text + "\n"
-	cites = [item[item.index("{") + 1:-1].replace(" ", "").replace("\t", "") for item in findall("\\\\cite\\{.+?\\}", content)]
+			content += removeCommentLine(text) + "\n"
+	cites = [item[item.index("{") + 1:-1] for item in findall("\\\\cite\\{.+?\\}", content)]
 	for i in range(len(cites) - 1, -1, -1):
 		if "," in cites[i]:
-			cites += cites[i].split(",")
+			cites += [item.strip() for item in cites[i].split(",")]
 			del cites[i]
 	
 	dicts = {}
@@ -175,7 +183,7 @@ def checkCitations(texFilepaths, isDebug = False) -> bool:
 		targets = findall("\\\\bibitem\\{.+?\\}", line)
 		if len(targets):
 			target = targets[0]
-			key = target[target.index("{") + 1:-1].replace(" ", "").replace("\t", "")
+			key = target[target.index("{") + 1:-1]
 			if key in dicts:
 				repeated_entry.append(key)
 			else:
@@ -195,10 +203,7 @@ def checkCitations(texFilepaths, isDebug = False) -> bool:
 		if not dicts[key].endswith(". "): # do not use elif
 			end_dot.append(key)
 	for key in list(dicts.keys()):
-		while dicts[key].startswith(" ") or dicts[key].startswith("\t"):
-			dicts[key] = dicts[key][1:]
-		while dicts[key].endswith(" ") or dicts[key].endswith("\t"):
-			dicts[key] = dicts[key][:-1]
+		dicts[key] = dicts[key].strip()
 	reverse_dict = {}
 	for key in list(dicts.keys()):
 		reverse_dict.setdefault(dicts[key], [])
@@ -291,11 +296,11 @@ def checkBibtex(texFilepaths, bibFilepaths, isDebug = False) -> bool:
 		if text is None:
 			print("Read tex file \"{0}\" failed. ".format(texFilepath))
 		else:
-			content += text + "\n"
-	cites = [item[item.index("{") + 1:-1].replace(" ", "").replace("\t", "") for item in findall("\\\\cite\\{[a-z0-9,\\s]+?\\}", content)]
+			content += removeCommentLine(text) + "\n"
+	cites = [item[item.index("{") + 1:-1] for item in findall("\\\\cite\\{[a-z0-9,\\s]+?\\}", content)]
 	for i in range(len(cites) - 1, -1, -1):
 		if "," in cites[i]:
-			cites += cites[i].split(",")
+			cites += [item.strip() for item in cites[i].split(",")]
 			del cites[i]
 	content = ""
 	for bibFilepath in bibFilepaths:
@@ -303,8 +308,8 @@ def checkBibtex(texFilepaths, bibFilepaths, isDebug = False) -> bool:
 		if text is None:
 			print("Read bib file \"{0}\" failed. ".format(bibFilepath))
 		else:
-			content += text + "\n"
-	bibs = [item[item.index("{") + 1:-1].replace(" ", "").replace("\t", "") for item in findall("@[a-z]+?\\{[a-z0-9\\s]+?,", content)]
+			content += removeCommentLine(text) + "\n"
+	bibs = [item[item.index("{") + 1:-1] for item in findall("@[a-z]+?\\{[a-z0-9\\s]+?,", content)]
 	if isDebug:
 		print("bibs =", bibs)
 		print("cites =", cites)
