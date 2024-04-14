@@ -81,7 +81,7 @@ class Music:#音乐类
 
 class WinOS:
 	@staticmethod
-	def clearScreen(fakeClear = 120):
+	def clearScreen(fakeClear:int = 120):
 		if sys.stdin.isatty():#在终端
 			if platform.system().lower() == "windows":
 				os.system("cls")
@@ -254,6 +254,18 @@ class PyTools:
 				return None
 		else:
 			return None # out of range
+	@staticmethod
+	def handleFolder(folder:str) -> bool:
+		if folder in ("", ".", "./", ".\\"):
+			return True
+		elif os.path.exists(folder):
+			return os.path.isdir(folder)
+		else:
+			try:
+				os.makedirs(folder)
+				return True
+			except:
+				return False
 	@staticmethod
 	def press_any_key_to_continue() -> bytes:
 		while kbhit():

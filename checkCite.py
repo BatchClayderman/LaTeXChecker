@@ -360,6 +360,51 @@ def checkBibtex(texFilepaths, bibFilepaths, isDebug = False) -> bool:
 	else:
 		return not any([repeated_entry, undefined_entry, uncited_entry])
 
+def citationSurvey(texFilepaths, isDebug = False) -> bool:
+	clearScreen()
+	if type(texFilepaths) not in (tuple, list) or not texFilepaths:
+		print("As no tex files are found, the checking cannot work. ")
+		print("Please press any key to go back. ")
+		press_any_key_to_continue()
+		return None
+	
+	dicts = {}
+	pointer = None
+	for texFilepath in texFilepaths:
+		text = getTxt(texFilepath)
+		if text is None:
+			print("Read tex file \"{0}\" failed. ".format(texFilepath))
+		else:
+			content = removeCommentLine(text)
+			for line in content.split("\n"):
+				if line.startswith("\\section{") and "}" in line[10:]:
+					key = line[9:line.index("}")]
+					while key.startswith(" ") or key.startswith("\t"):
+						key = key[1:]
+					while key.endswith(" ") or key.endswith("\t"):
+						key = key[:-1]
+					dicts.setdefault(key, 0)
+					pointer = key
+				if pointer:
+					cites = [item[item.index("{") + 1:-1] for item in findall("\\\\cite\\{.+?\\}", line)]
+					for i in range(len(cites) - 1, -1, -1):
+						if "," in cites[i]:
+							cites += [item.strip() for item in cites[i].split(",")]
+							del cites[i]
+					dicts[pointer] += len(cites)
+	if dicts:
+		for key in list(dicts.keys()):
+			print("{0}\t{1}".format(key, dicts[key]))
+	else:
+		print("No citation data are got. ")
+	
+	print()
+	if input("Would you like to check again (input \"Y\" and enter to check again): ").upper() == "Y":
+		return citationSurvey(texFilepaths, isDebug = isDebug)
+	else:
+		return bool(dicts)
+
+
 def mainBoard(latex_folder) -> None:
 	while True:
 		clearScreen()
@@ -385,6 +430,7 @@ def mainBoard(latex_folder) -> None:
 		print("\t2 = Check labels")
 		print("\t3 = Check citations")
 		print("\t4 = Check bibtex")
+		print("\t5 = Citation data survey")
 		print("\n")
 		ch = input("Please select an option to continue: ")
 		if ch == "0":
@@ -397,6 +443,8 @@ def mainBoard(latex_folder) -> None:
 			checkCitations(dicts["tex"] if "tex" in dicts else None)
 		elif ch == "4":
 			checkBibtex(dicts["tex"] if "tex" in dicts else None, dicts["bib"] if "bib" in dicts else None)
+		elif ch == "5":
+			citationSurvey(dicts["tex"] if "tex" in dicts else None)
 		else:
 			print("Unknown input, please press any key to continue. ")
 			press_any_key_to_continue()
