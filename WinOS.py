@@ -241,7 +241,7 @@ class PyTools:
 		while True:
 			_debug()
 	@staticmethod
-	def getTxt(filepath, index = 0) -> str: # get .txt content
+	def getTxt(filepath:str, index:int = 0) -> str: # get .txt content
 		coding = ("utf-8", "gbk", "utf-16") # codings
 		if 0 <= index < len(coding): # in the range
 			try:

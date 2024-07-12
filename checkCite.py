@@ -170,8 +170,8 @@ def checkCitations(texFilepaths, isDebug = False) -> bool:
 		if text is None:
 			print("Read tex file \"{0}\" failed. ".format(texFilepath))
 		else:
-			content += removeCommentLine(text) + "\n"
-	cites = [item[item.index("{") + 1:-1] for item in findall("\\\\cite\\{.+?\\}", content)]
+			content += removeCommentLine(text).replace("\\newcommand{\\upcite}[1]{\\textsuperscript{\\cite{#1}}}", "").replace("\\upcite", "\\cite") + "\n"
+	cites = [item[item.index("{") + 1:-1] for item in findall("\\\\cite\\{.*?\\}", content)]
 	for i in range(len(cites) - 1, -1, -1):
 		if "," in cites[i]:
 			cites += [item.strip() for item in cites[i].split(",")]

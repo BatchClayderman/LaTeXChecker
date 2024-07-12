@@ -1,7 +1,7 @@
 import platform
 import os
-import sys	
-from shutil import copy
+from sys import stdin, exit
+from shutil import copy, copytree, rmtree
 import hashlib
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
@@ -37,7 +37,7 @@ class ProgressBar:
 
 
 def clearScreen(fakeClear:int = 120):
-	if sys.stdin.isatty(): # is at a console
+	if stdin.isatty(): # is at a console
 		if platform.system().lower() == "windows":
 			os.system("cls")
 		elif platform.system().lower() == "linux":
@@ -75,7 +75,7 @@ def compare(rootDir1:str, rootDir2:str, dir1:str, dir2:str, compareFileContent:b
 		exceptionLists.append((os.path.relpath(dir1, rootDir1), e))
 		print("\r" + " " * ncols + "\x1b[F\x1b[K", end = "") # 向上一层
 		return (addLists, removeLists, conflictLists, exceptionLists, differLists)
-	pBar = ProgressBar(total = len(listDir1) + len(listDir2), desc = "Layer {0}".format(indent), ncols = ncols)
+	pBar = ProgressBar(total = len(listDir1) + len(listDir2), desc = "Layer {0}".format(indent), postfix = "(a, r, c, e, d) = (0, 0, 0, 0, 0)", ncols = ncols)
 	try:
 		while listDir1 and listDir2:
 			if listDir1[0] == listDir2[0] or not caseSensitive and listDir1[0].lower() == listDir2[0].lower(): # 相同情况比较属性（目录或文件）是否一致
@@ -131,14 +131,79 @@ def compare(rootDir1:str, rootDir2:str, dir1:str, dir2:str, compareFileContent:b
 		flags[0] = False
 	return (addLists, removeLists, conflictLists, exceptionLists, differLists)
 
-def doCompare(dir1:str, dir2:str, compareFileContent:bool = True, caseSensitive:bool = True) -> bool:
+def selectOperation(addFlag:bool, removeFlag:bool, differFlag:bool) -> int:
+	print("\n可供选择的操作如下（“删除”指直接删除而非移至回收站）：")
+	if addFlag:
+		print("\t1 = 从目标文件夹删除目标文件夹拥有而源文件夹没有的文件（源 → 目标）")
+		print("\t2 = 从目标文件夹向源文件夹复制目标文件夹拥有而源文件夹没有的文件（目标 → 源）")
+	if removeFlag:
+		print("\t3 = 从源文件夹向目标文件夹复制源文件夹拥有而目标文件夹没有的文件（源 → 目标）")
+		print("\t4 = 从源文件夹删除源文件夹拥有而目标文件夹没有的文件（目标 → 源）")
+	if differFlag:
+		print("\t5 = 从源文件夹向目标文件夹同步内容不同的文件（源 → 目标）")
+		print("\t6 = 从目标文件夹向源文件夹同步内容不同的文件（目标 → 源）")
+	print("\t7 = 保存对比结果")
+	print("\t8 = 重新发起检查（原有配置）")
+	print("\t9 = 发起新的检查")
+	print("\t0 = 退出程序")
+	print()
+	iRet = input("请选择一项以继续：")
+	while True:
+		if iRet in (str(i) for i in range(10)):
+			if iRet in "7890" or input("即将执行操作 {0}，为确保不是误触，请输入“Y”（区分大小写）回车以再次确认：".format(iRet)) == "Y":
+				return int(iRet)
+			else:
+				iRet = input("输入取消，请重新输入：")
+		else:
+			iRet = input("无效输入，请重试：")
+
+def doRemove(folder:str, targetList:list) -> bool:
+	successCnt, totalCnt = 0, 0
+	for item in targetList:
+		totalCnt += 1
+		toRemoveFp = os.path.join(folder, item)
+		try:
+			if os.path.isdir(toRemoveFp):
+				rmtree(toRemoveFp)
+			else:
+				os.remove(toRemoveFp)
+			successCnt += 1
+		except Exception as e:
+			print("Failed removing \"{0}\". Details are as follows. \n{1}".format(toRemoveFp, e))
+	print("删除完成，删除成功率：{0} / {1} = {2}%。".format(successCnt, totalCnt, 100 * successCnt / totalCnt)) # 不存在 0 除情况
+	return successCnt == totalCnt
+
+def doCopy(dir1:str, dir2:str, targetList:list) -> bool:
+	successCnt, totalCnt = 0, 0
+	for item in targetList:
+		totalCnt += 1
+		sourceFp = os.path.join(dir1, item)
+		targetFp = os.path.join(dir2, item)
+		try:
+			if os.path.isdir(sourceFp):
+				copytree(sourceFp, targetFp)
+			else:
+				copy(sourceFp, targetFp)
+			successCnt += 1
+		except Exception as e:
+			print("Failed copying \"{0}\" to \"{1}\". Details are as follows. \n{2}".format(sourceFp, targetFp, e))
+	print("复制完成，复制成功率：{0} / {1} = {2}%。".format(successCnt, totalCnt, 100 * successCnt / totalCnt)) # 不存在 0 除情况
+	return successCnt == totalCnt
+
+def doCompare(dir1:str, dir2:str, compareFileContent:bool = True, caseSensitive:bool = True, state:list = [True]) -> bool:
 	clearScreen()
 	if not os.path.isdir(dir1):
-		print("源文件夹不存在：\"{0}\"".format(dir1))
+		print("源文件夹不存在：\"{0}\"\n请按回车键返回。".format(dir1))
+		input()
+		return None
 	elif not os.path.isdir(dir2):
-		print("目标文件夹不存在：\"{0}\"".format(dir2))
+		print("目标文件夹不存在：\"{0}\"\n请按回车键返回。".format(dir2))
+		input()
+		return None
 	elif dir1 == dir2 or not caseSensitive and dir1.lower() == dir2.lower():
-		print("源文件夹路径和目标文件夹路径相同。")
+		print("源文件夹路径和目标文件夹路径相同，请按回车键返回。")
+		input()
+		return None
 	else:
 		print("源文件夹：\"{0}\"".format(dir1))
 		print("目标文件夹：\"{0}\"".format(dir2))
@@ -157,53 +222,66 @@ def doCompare(dir1:str, dir2:str, compareFileContent:bool = True, caseSensitive:
 			print("Totally {0} added, {1} removed, {2} conflicted, {3} erroneous, and {4} different items. ".format(len(addLists), len(removeLists), len(conflictLists), len(exceptionLists), len(differLists)))
 		else:
 			print("Totally {0} added, {1} removed, {2} conflicted, and {3} erroneous items. ".format(len(addLists), len(removeLists), len(conflictLists), len(exceptionLists)))
-		fpath = input("\n如有需要，请输入比对结果保存路径（留空跳过）：").replace("\"", "")
-		if fpath:
-			try:
-				with open(fpath, "w", encoding = "utf-8") as f:
-					f.write("Source = \"{0}\"\n".format(dir1))
-					f.write("Target = \"{0}\"\n".format(dir2))
-					f.write("addLists = {0}\n".format(addLists))
-					f.write("removeLists = {0}\n".format(removeLists))
-					f.write("conflictLists = {0}\n".format(conflictLists))
-					f.write("exceptionLists = {0}\n".format(exceptionLists))
-					if compareFileContent:
-						f.write("differLists = {0}\n".format(differLists))
-						f.write("Totally {0} added, {1} removed, and {2} different files. \n".format(len(addLists), len(removeLists), len(differLists)))
-					else:
-						f.write("Totally {0} added and {1} removed files. \n".format(len(addLists), len(removeLists)))
-				print("保存成功！")
-			except Exception as e:
-				print("保存失败，异常信息如下：")
-				print(e)
-		if compareFileContent and differLists and input("\n是否从源文件夹向目标文件夹同步（输入“Y”回车可同步）？").upper() == "Y":
-			successCnt, totalCnt = 0, 0
-			for item in differLists:
-				totalCnt += 1
+		while True:
+			choice = selectOperation(bool(addLists), bool(removeLists), bool(differLists))
+			if choice == 1:
+				doRemove(dir2, addLists)
+			elif choice == 2:
+				doCopy(dir2, dir1, addLists)
+			elif choice == 3:
+				doCopy(dir1, dir2, removeLists)
+			elif choice == 4:
+				doRemove(dir1, removeLists)				
+			elif choice == 5:
+				doCopy(dir1, dir2, differLists)
+			elif choice == 6:
+				doCopy(dir2, dir1, differLists)
+			elif choice == 7:
+				fpath = input("请输入比对结果保存路径（留空取消）：").replace("\"", "")
+				if fpath:
+					try:
+						with open(fpath, "w", encoding = "utf-8") as f:
+							f.write("Source = \"{0}\"\n".format(dir1))
+							f.write("Target = \"{0}\"\n".format(dir2))
+							f.write("addLists = {0}\n".format(addLists))
+							f.write("removeLists = {0}\n".format(removeLists))
+							f.write("conflictLists = {0}\n".format(conflictLists))
+							f.write("exceptionLists = {0}\n".format(exceptionLists))
+							if compareFileContent:
+								f.write("differLists = {0}\n".format(differLists))
+								f.write("Totally {0} added, {1} removed, and {2} different files. \n".format(len(addLists), len(removeLists), len(differLists)))
+							else:
+								f.write("Totally {0} added and {1} removed files. \n".format(len(addLists), len(removeLists)))
+						print("保存成功！")
+					except Exception as e:
+						print("保存失败，异常信息如下：")
+						print(e)
+			elif choice == 8:
+				return doCompare(dir1, dir2, compareFileContent = compareFileContent, caseSensitive = caseSensitive, state = state)
+			elif choice == 9:
 				try:
-					copy(os.path.join(dir1, item), os.path.join(dir2, item))
-					successCnt += 1
-				except Exception as e:
-					print("Failed copying \"{0}\" to \"{1}\". Details are as follows. \n{2}".format(os.path.join(dir1, item), os.path.join(dir2, item), e))
-			print("同步完成，同步成功率：{0} / {1} = {2}%。".format(successCnt, totalCnt, 100 * successCnt / totalCnt)) # 不存在 0 除情况
-	if input("\n是否再次检查（输入“Y”回车可再次发起检查）？").upper() == "Y":
-		return doCompare(dir1, dir2, compareFileContent = compareFileContent, caseSensitive = caseSensitive)
-	else:
-		try:
-			return not any([addLists, removeLists, conflictLists, exceptionLists, differLists])
-		except: # 未定义变量
-			return None
+					return not any([addLists, removeLists, conflictLists, exceptionLists, differLists])
+				except: # 未定义变量
+					return None
+			elif choice == 0:
+				state[0] = False
+				try:
+					return not any([addLists, removeLists, conflictLists, exceptionLists, differLists])
+				except: # 未定义变量
+					return None
 
 def main() -> int:
-	sourcePath = input("请输入源文件夹路径：").replace("\"", "")
-	targetPath = input("请输入目标文件夹路径：").replace("\"", "")
-	compareFileContent = "Y" in input("请选择是否需要比较文件内容（输入“Y”表示“是”）：").upper()
-	caseSensitive = "Y" in input("请选择大小写是否敏感（输入“Y”表示“是”）：").upper()
-	bRet = doCompare(sourcePath, targetPath, compareFileContent = compareFileContent, caseSensitive = caseSensitive)
-	clearScreen()
+	state = [True]
+	while state[0]:
+		sourcePath = input("请输入源文件夹路径：").replace("\"", "")
+		targetPath = input("请输入目标文件夹路径：").replace("\"", "")
+		compareFileContent = input("请选择是否需要比较文件内容（输入“Y”表示“是”）：").upper() in ("1", "Y")
+		caseSensitive = input("请选择大小写是否敏感（输入“Y”表示“是”）：").upper() in ("1", "Y")
+		bRet = doCompare(sourcePath, targetPath, compareFileContent = compareFileContent, caseSensitive = caseSensitive, state = state)
+		clearScreen()
 	return EXIT_SUCCESS if bRet else EXIT_FAILURE
 
 
 
 if __name__ == "__main__":
-	sys.exit(main())
+	exit(main())
