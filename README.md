@@ -31,3 +31,13 @@ This script is used to compare two directories.
 4) This script compares file contents using SHA256 hash values instead of comparing each byte to speed up. Although both methods require traversing entire files, the method of using hash functions saves time by reducing the number of ``if`` executions (it takes me a minute to finish). 
 
 5) This script provides a multi-level progress report structure (it seems that this feature takes me the same amount of time as the sum of the previous four points). 
+
+## aobiAdb.py
+
+This script is used for Android automatic control based on uiautomator2. 
+
+Currently, this script is no longer under maintenance due to some limitations. 
+
+This script cannot follow the Android screen in real-time. 
+
+No multiple points are supported while I expect to have ``p1, p2 = Point(), Point()``, ``p1.click(x, y)``, ``p2.wrap(x1, y1, x2, y2)``, and ``Point.commit(p1, p2)``. 
