@@ -2,13 +2,21 @@
 
 This is a set of small toolkits that I use most. 
 
+## latexChecker.py
+
+This script is used to check the LaTeX files, supporting complex structures. 
+
 ## checkCite.py
 
 This script is used to check the LaTeX files. 
 
+This script will no longer be under maintenance. 
+
+Please use the LaTeX checker. 
+
 ## WinOS.py
 
-This script is something used very frequently on the Windows platform. 
+This script is a tool used very frequently on the Windows platform. 
 
 ## compareDirectory.py
 
