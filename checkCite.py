@@ -8,7 +8,7 @@ EXIT_FAILURE = 1
 EOF = (-1)
 
 
-def getTxt(filepath, index = 0) -> str: # get .txt content
+def getTxt(filepath:str, index:int = 0) -> str: # get .txt content
 	coding = ("utf-8", "gbk", "utf-16") # codings
 	if 0 <= index < len(coding): # in the range
 		try:
@@ -30,7 +30,7 @@ def removeCommentLine(text) -> str: # remove comment lines
 				lines[i] = lines[i][:j]
 	return "\n".join(lines)
 
-def clearScreen(fakeClear = 120):
+def clearScreen(fakeClear:int = 120) -> None:
 	if sys.stdin.isatty(): # is at a console
 		if platform.system().lower() == "windows":
 			os.system("cls")
@@ -52,7 +52,7 @@ def press_any_key_to_continue() -> bytes:
 		getch()
 	return getch()
 
-def preExit(countdownTime = 5) -> None:
+def preExit(countdownTime:int = 5) -> None:
 	try:
 		cntTime = int(countdownTime)
 		length = len(str(cntTime))

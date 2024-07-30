@@ -272,7 +272,7 @@ class PyTools:
 			getch()
 		return getch()
 	@staticmethod
-	def preExit(countdownTime = 5) -> None:
+	def preExit(countdownTime:int = 5) -> None:
 		try:
 			cntTime = int(countdownTime)
 			length = len(str(cntTime))
