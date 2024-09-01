@@ -2,10 +2,6 @@
 
 This is a set of small toolkits that I use most. 
 
-## latexChecker.py
-
-This script is used to check the LaTeX files, supporting complex structures. 
-
 ## checkCite.py
 
 This script is used to check the LaTeX files. 
@@ -13,6 +9,20 @@ This script is used to check the LaTeX files.
 This script will no longer be under maintenance. 
 
 Please use the LaTeX checker. 
+
+## checkLaTeX.py
+
+This script is used to check the LaTeX files, supporting complex structures. 
+
+### v0.3
+
+In this version, some functions are accomplished. 
+
+However, it is not an optimal way to handle LaTeX checking tasks. 
+
+### v1.0
+
+The initial version of ``checkLaTeX.py``. 
 
 ## WinOS.py
 
