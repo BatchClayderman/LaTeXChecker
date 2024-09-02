@@ -2,6 +2,12 @@
 
 This is a set of small toolkits that I use most. 
 
+## adjustCalendar.py
+
+This script can help handle some calendar issues in bulk. 
+
+It can be used to remove online course arrangements from the calendar. 
+
 ## checkCite.py
 
 This script is used to check the LaTeX files without understanding the LaTeX files. 
@@ -29,10 +35,6 @@ This version of the script cannot run. It acts as a thought provider here.
 ### v2.0
 
 This is the initial version of ``checkLaTeX.py`` that supports complex structures with understanding the LaTeX files. 
-
-## adjustCalendar.py
-
-This script can help handle some calendar issues in bulk. 
 
 ## WinOS.py
 
