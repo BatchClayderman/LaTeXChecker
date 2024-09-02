@@ -24,9 +24,15 @@ In this version, some functions are accomplished.
 
 However, it is not an optimal way to handle LaTeX checking tasks. 
 
+This version of the script cannot run. It acts as a thought provider here. 
+
 ### v2.0
 
 This is the initial version of ``checkLaTeX.py`` that supports complex structures with understanding the LaTeX files. 
+
+## adjustCalendar.py
+
+This script can help handle some calendar issues in bulk. 
 
 ## WinOS.py
 
