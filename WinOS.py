@@ -1,11 +1,8 @@
-import platform
 import os
 from sys import executable, exit
-import shutil
-import string
-import base64
-import chardet
+from shutil import move
 from msvcrt import getch, kbhit
+from chardet import detect
 from time import time, sleep
 EXIT_SUCCESS = 0#操作成功结束
 EXIT_FAILURE = 1#失败
@@ -31,9 +28,7 @@ class Music:#音乐类
 		return str(self.getDict())
 	@staticmethod
 	def decodeData(bin_seq):#检测编码并解密
-		#print(bin_seq)
-		result = chardet.detect(bin_seq)
-		#print(result)
+		result = detect(bin_seq)
 		if result["confidence"] > 0:
 			try:
 				#return bin_seq.decode(result["encoding"])
@@ -187,7 +182,7 @@ class WinOS:
 					os.mkdir(rp + folder)
 				for file in dic[folder]:
 					try:
-						shutil.move(rp + file, rp + folder)
+						move(rp + file, rp + folder)
 					except Exception as ee:
 						errorDict.setdefault(rp + file, ee)
 			if len(errorDict) == 0:
