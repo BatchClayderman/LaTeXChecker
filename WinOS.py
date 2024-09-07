@@ -1,6 +1,6 @@
 import platform
 import os
-import sys
+from sys import executable, exit
 import shutil
 import string
 import base64
@@ -10,6 +10,8 @@ from time import time, sleep
 EXIT_SUCCESS = 0#操作成功结束
 EXIT_FAILURE = 1#失败
 EOF = (-1)
+PLATFORM = __import__("platform").system().upper()
+CLEAR_SCREEN_COMMAND = ("CLS" if PLATFORM == "WINDOWS" else "clear") if __import__("sys").stdin.isatty() else None
 
 
 
@@ -82,21 +84,14 @@ class Music:#音乐类
 class WinOS:
 	@staticmethod
 	def clearScreen(fakeClear:int = 120):
-		if sys.stdin.isatty():#在终端
-			if platform.system().lower() == "windows":
-				os.system("cls")
-			elif platform.system().lower() == "linux":
-				os.system("clear")
-			else:
-				try:
-					print("\n" * int(fakeClear))
-				except:
-					print("\n" * 120)
+		if CLEAR_SCREEN_COMMAND is not None and not os.system(CLEAR_SCREEN_COMMAND):
+			return True
 		else:
 			try:
 				print("\n" * int(fakeClear))
 			except:
 				print("\n" * 120)
+			return False
 	@staticmethod
 	def clearSpecialChar(fp, special_lists = list("\\/:*?\"<>|"), reserve_names = ["", "nul", "prn", "con", "aux"] + ["com{0}".format(i) for i in range(10)] + ["lpt{0}".format(i) for i in range(10)], target = ""):
 		n_fp = os.path.splitext(os.path.split(fp)[1])[0]
@@ -110,22 +105,22 @@ class WinOS:
 		print("未（正确）安装 " + cb + " 库，正在尝试执行安装，请确保您的网络连接正常。")
 		if inst_1 == None:
 			if version == None:
-				os.system("\"" + sys.executable + "\" -m pip install " + cb)
+				os.system("\"" + executable + "\" -m pip install " + cb)
 			else:
-				os.system("\"" + sys.executable + "\" -m pip install " + cb + "==" + version)
+				os.system("\"" + executable + "\" -m pip install " + cb + "==" + version)
 		else:
 			os.system(inst_1)
 		try:
 			exec(command)
 		except:
 			WinOS.clearScreen()
-			if platform.system().lower() == "windows" and os.popen("ver").read().upper().find("XP") == -1:#找不到相关字样
+			if PLATFORM == "WINDOWS" and os.popen("ver").read().upper().find("XP") == -1:#找不到相关字样
 				print("安装 " + cb + " 库失败，正在尝试以管理员权限执行安装，请确保您的网络连接正常。")
 				if inst_2 == None:#提权以管理员身份运行
 					if version == None:
-						os.system("mshta vbscript:createobject(\"shell.application\").shellexecute(\"" + sys.executable + "\",\"-m pip install " + cb + "\",\"\",\"runas\",\"1\")(window.close)")
+						os.system("mshta vbscript:createobject(\"shell.application\").shellexecute(\"" + executable + "\",\"-m pip install " + cb + "\",\"\",\"runas\",\"1\")(window.close)")
 					else:
-						os.system("mshta vbscript:createobject(\"shell.application\").shellexecute(\"" + sys.executable + "\",\"-m pip install " + cb + "==" + version + "\",\"\",\"runas\",\"1\")(window.close)")
+						os.system("mshta vbscript:createobject(\"shell.application\").shellexecute(\"" + executable + "\",\"-m pip install " + cb + "==" + version + "\",\"\",\"runas\",\"1\")(window.close)")
 				else:
 					os.system(inst_2)
 				print("已弹出新窗口，确认授权并安装完成后，请按任意键继续。")
@@ -135,11 +130,11 @@ class WinOS:
 				except:
 					print("无法正确安装 " + cb + " 库，请按任意键退出，建议稍后重新启动本程序。")
 					os.system("pause>nul&cls")
-					sys.exit(EOF)
+					exit(EOF)
 			else:
 				print("无法正确安装 " + cb + " 库，请按任意键退出，建议稍后重新启动本程序。")
 				os.system("pause>nul&cls")
-				sys.exit(EOF)
+				exit(EOF)
 	@staticmethod
 	def cdCurrentPath():
 		try:
@@ -147,7 +142,7 @@ class WinOS:
 		except:
 			pass
 	@staticmethod
-	def osWalk(target_path, extent = None, caseSen = (platform.system().lower() != "windows")):#遍历文件夹
+	def osWalk(target_path, extent = None, caseSen = (PLATFORM != "WINDOWS")):#遍历文件夹
 		allPath = []
 		for base_path, folder_list, file_list in os.walk(target_path):
 			for file_name in file_list:
@@ -229,33 +224,87 @@ class PyTools:
 			call("pip install --upgrade " + " ".join(package_mame), shell = True)
 	@staticmethod
 	def debug():
-		def _debug(tmp = None):
-			tmp = input(">>> ") if tmp is None else tmp + "\n" + input("... ")
-			try:
-				exec(tmp)
-			except Exception as e:
-				if str(e).startswith("unexpected EOF while parsing (<string>, line"):
-					_debug(tmp = tmp)
+		def __debug():
+			__statement = input(">>> ")
+			while True:
+				__stack = []
+				__i = 0
+				while __i < len(__statement):
+					__ch = __statement[__i]
+					if __ch in ("(", "[", "{"):
+						if not (__stack and __stack[-1] in ("\"", "\'", "\"" * 3, "\'" * 3)):
+							__stack.append(__ch)
+					elif __ch in (")", "]", "}"):
+						if __stack and __stack[-1] == {")":"(", "]":"[", "}":"{"}[__ch]:
+							__stack.pop()
+						elif not (__stack and __stack[-1] in ("\"", "\'", "\"" * 3, "\'" * 3)):
+							__stack.clear() # ask the Python to throw exceptions directly
+							break
+					elif "\"" == __ch:
+						if not (__stack and __stack[-1] in ("\'", "\'" * 3)):
+							if __stack and __stack[-1] == "\"":
+								__stack.pop()
+							elif __stack and __stack[-1] == "\"" * 3:
+								if __statement[__i:__i + 3] == "\"" * 3:
+									__stack.pop()
+									__i += 2 # skip two chars
+							elif __statement[__i:__i + 3] == "\"" * 3:
+								__stack.append("\"" * 3)
+								__i += 2
+							else:
+								__stack.append("\"")
+					elif "\'" == __ch:
+						if not (__stack and __stack[-1] in ("\"", "\"" * 3)):
+							if __stack and __stack[-1] == "\'":
+								__stack.pop()
+							elif __stack and __stack[-1] == "\'" * 3:
+								if __statement[__i:__i + 3] == "\'" * 3:
+									__stack.pop()
+									__i += 2 # skip two chars
+							elif __statement[__i:__i + 3] == "\'" * 3:
+								__stack.append("\'" * 3)
+								__i += 2
+							else:
+								__stack.append("\'")
+					elif "\\" == __ch:
+						i += 1 # skip a char
+					__i += 1
+				if  __stack:
+					__statement = __statement + "\n" + input("... ")
 				else:
-					print(e)
+					del __stack, __i, __ch
+					break
+			try:
+				__res = eval(__statement)
+				if __res is not None:
+					print(__res)
+			except:
+				try:
+					exec(__statement)
+				except Exception as __e:
+					print(__e)
 		while True:
-			_debug()
+			try:
+				__debug()
+			except KeyboardInterrupt:
+				print("\nKeyboardInterrupt")
 	@staticmethod
-	def getTxt(filepath:str, index:int = 0) -> str: # get .txt content
+	def getTxt(filePath:str, index:int = 0) -> str: # get .txt content
 		coding = ("utf-8", "gbk", "utf-16") # codings
 		if 0 <= index < len(coding): # in the range
 			try:
-				with open(filepath, "r", encoding = coding[index]) as f:
+				with open(filePath, "r", encoding = coding[index]) as f:
 					content = f.read()
 				return content[1:] if content.startswith("\ufeff") else content # if utf-8 with BOM, remove BOM
 			except (UnicodeError, UnicodeDecodeError):
-				return getTxt(filepath, index + 1) # recursion
+				return getTxt(filePath, index + 1) # recursion
 			except:
 				return None
 		else:
 			return None # out of range
 	@staticmethod
-	def handleFolder(folder:str) -> bool:
+	def handleFolder(fd:str) -> bool:
+		folder = str(fd)
 		if folder in ("", ".", "./", ".\\"):
 			return True
 		elif os.path.exists(folder):
