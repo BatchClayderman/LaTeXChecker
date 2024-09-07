@@ -38,9 +38,9 @@ class ProgressBar:
 
 def clearScreen(fakeClear:int = 120):
 	if stdin.isatty(): # is at a console
-		if platform.system().upper() == "WINDOWS":
+		if platform.system().lower() == "windows":
 			os.system("cls")
-		elif platform.system().upper() == "LINUX":
+		elif platform.system().lower() == "linux":
 			os.system("clear")
 		else:
 			try:
@@ -52,12 +52,6 @@ def clearScreen(fakeClear:int = 120):
 			print("\n" * int(fakeClear))
 		except:
 			print("\n" * 120)
-
-def getRelPath(path:str, start:str) -> str:
-	try:
-		return os.path.relpath(path, start)
-	except:
-		return os.path.abspath(path)
 
 def SHA256(fpath:str, isEcho:bool = False) -> str|Exception|None:
 	if not os.path.isfile(fpath):
@@ -76,64 +70,17 @@ def SHA256(fpath:str, isEcho:bool = False) -> str|Exception|None:
 def compare(rootDir1:str, rootDir2:str, dir1:str, dir2:str, compareFileContent:bool = True, caseSensitive:bool = True, indent:int = 0, flags:list = [True]) -> tuple:
 	addLists, removeLists, conflictLists, exceptionLists, differLists = [], [], [], [], []
 	try:
-		listDir1, listDir2 = sorted([item for item in os.listdir(dir1) if item not in specialFolders], key = lambda x:x.upper()), sorted([item for item in os.listdir(dir2) if item not in specialFolders], key = lambda x:x.upper()) # 获取一层并排除特殊的文件夹
-		assistDir1, assistDir2 = (listDir1[::], listDir2[::]) if caseSensitive else ([item.upper() for item in listDir1], [item.upper() for item in listDir2]) # handle issues of repeated directories and the switch of case sensitivity
-		setDir1 = set(assistDir1)
-		if len(setDir1) != len(assistDir1):
-			for ele in sorted(setDir1, key = lambda x:x.upper()):
-				if assistDir1.count(ele) > 1:
-					while ele in assistDir1:
-						idx = assistDir1.index(ele)
-						cItem = getRelPath(os.path.join(dir1, listDir1[idx]), rootDir1)
-						if cItem not in conflictLists:
-							conflictLists.append(cItem)
-						del assistDir1[idx]
-						del listDir1[idx]
-					while ele in assistDir2:
-						idx = assistDir2.index(ele)
-						cItem = getRelPath(os.path.join(dir2, listDir2[idx]), rootDir2)
-						if cItem not in conflictLists:
-							conflictLists.append(cItem)
-						del assistDir2[idx]
-						del listDir2[idx]
-		setDir2 = set(assistDir2)
-		if len(setDir2) != len(assistDir2):
-			for ele in sorted(setDir2, key = lambda x:x.upper()):
-				if assistDir2.count(ele) > 1:
-					while ele in assistDir1:
-						idx = assistDir1.index(ele)
-						cItem = getRelPath(os.path.join(dir1, listDir1[idx]), rootDir1)
-						if cItem not in conflictLists:
-							conflictLists.append(cItem)
-						del assistDir1[idx]
-						del listDir1[idx]
-					while ele in assistDir2:
-						idx = assistDir2.index(ele)
-						cItem = getRelPath(os.path.join(dir2, listDir2[idx]), rootDir2)
-						if cItem not in conflictLists:
-							conflictLists.append(cItem)
-						del assistDir2[idx]
-						del listDir2[idx]
+		listDir1, listDir2 = sorted([item for item in os.listdir(dir1) if item not in specialFolders]), sorted([item for item in os.listdir(dir2) if item not in specialFolders]) # 获取一层并排除特殊的文件夹
 	except Exception as e:
-		exceptionLists.append((getRelPath(dir1, rootDir1), e))
+		exceptionLists.append((os.path.relpath(dir1, rootDir1), e))
 		print("\r" + " " * ncols + "\x1b[F\x1b[K", end = "") # 向上一层
 		return (addLists, removeLists, conflictLists, exceptionLists, differLists)
 	pBar = ProgressBar(total = len(listDir1) + len(listDir2), desc = "Layer {0}".format(indent), postfix = "(a, r, c, e, d) = (0, 0, 0, 0, 0)", ncols = ncols)
 	try:
 		while listDir1 and listDir2:
-			if listDir1[0] == listDir2[0] or not caseSensitive and listDir1[0].upper() == listDir2[0].upper(): # 相同情况比较属性（目录或文件）是否一致
+			if listDir1[0] == listDir2[0] or not caseSensitive and listDir1[0].lower() == listDir2[0].lower(): # 相同情况比较属性（目录或文件）是否一致
 				target1, target2 = os.path.join(dir1, listDir1[0]), os.path.join(dir2, listDir2[0])
-				if os.path.islink(target1) and os.path.islink(target2): # 都是软链接
-					if compareFileContent:
-						try:
-							if not (										\
-								caseSensitive and os.readlink(target1) == os.readlink(target2)				\
-								or not caseSensitive and os.readlink(target1).upper() == os.readlink(target2).upper()		\
-							):
-								differLists.append(getRelPath(target1, rootDir1))
-						except Exception as e:
-							exceptionLists.append((getRelPath(target1, rootDir1), e))
-				elif os.path.isdir(target1) and os.path.isdir(target2): # 都是文件夹则递归
+				if os.path.isdir(target1) and os.path.isdir(target2): # 都是文件夹则递归
 					print() # 向下一层
 					tRet = compare(rootDir1, rootDir2, target1, target2, compareFileContent = compareFileContent, caseSensitive = caseSensitive, indent = indent + 1, flags = flags)
 					addLists.extend(tRet[0])
@@ -150,43 +97,38 @@ def compare(rootDir1:str, rootDir2:str, dir1:str, dir2:str, compareFileContent:b
 						sha2 = SHA256(target2)
 						if isinstance(sha1, str) and isinstance(sha2, str):
 							if sha1 != sha2:
-								differLists.append(getRelPath(target1, rootDir1))
+								differLists.append(os.path.relpath(target1, rootDir1))	
 						else:
-							exceptionLists.append((getRelPath(target1, rootDir1), (sha1, sha2)))
+							exceptionLists.append((os.path.relpath(target1, rootDir1), (sha1, sha2)))
 				else: # 属性（目录或文件）不同
-					conflictLists.append(getRelPath(target1, rootDir1))
+					conflictLicts.append(os.path.relpath(target1, rootDir1))
 				listDir1.pop(0)
 				listDir2.pop(0)
 				pBar.set_postfix("(a, r, c, e, d) = ({0}, {1}, {2}, {3}, {4})".format(len(addLists), len(removeLists), len(conflictLists), len(exceptionLists), len(differLists)))
 				pBar.update(2)
 			elif listDir1[0] < listDir2[0]: # 第一个目标小
 				target1 = os.path.join(dir1, listDir1[0])
-				removeLists.append(getRelPath(target1, rootDir1)) # 标记为删除
+				removeLists.append(os.path.relpath(target1, rootDir1)) # 标记为删除
 				listDir1.pop(0)
 				pBar.set_postfix("(a, r, c, e, d) = ({0}, {1}, {2}, {3}, {4})".format(len(addLists), len(removeLists), len(conflictLists), len(exceptionLists), len(differLists)))
 				pBar.update(1)
 			elif listDir1[0] > listDir2[0]: # 第二个目标小
 				target2 = os.path.join(dir2, listDir2[0])
-				addLists.append(getRelPath(target2, rootDir2)) # 标记为增加
+				addLists.append(os.path.relpath(target2, rootDir2)) # 标记为增加
 				listDir2.pop(0)
 				pBar.set_postfix("(a, r, c, e, d) = ({0}, {1}, {2}, {3}, {4})".format(len(addLists), len(removeLists), len(conflictLists), len(exceptionLists), len(differLists)))
 				pBar.update(1)
 		if listDir1:
-			removeLists.extend([getRelPath(os.path.join(dir1, item), rootDir1) for item in listDir1])
+			removeLists.extend([os.path.relpath(os.path.join(dir1, item), rootDir1) for item in listDir1])
 			pBar.set_postfix("(a, r, c, e, d) = ({0}, {1}, {2}, {3}, {4})".format(len(addLists), len(removeLists), len(conflictLists), len(exceptionLists), len(differLists)))
 			pBar.update(len(listDir1))
 		elif listDir2:
-			addLists.extend([getRelPath(os.path.join(dir2, item), rootDir2) for item in listDir2])
+			addLists.extend([os.path.relpath(os.path.join(dir2, item), rootDir2) for item in listDir2])
 			pBar.set_postfix("(a, r, c, e, d) = ({0}, {1}, {2}, {3}, {4})".format(len(addLists), len(removeLists), len(conflictLists), len(exceptionLists), len(differLists)))
 			pBar.update(len(listDir2))
 		print("\r" + " " * ncols + "\x1b[F\x1b[K", end = "") # 向上一层
 	except KeyboardInterrupt:
 		flags[0] = False
-	except Exception as e:
-		print("\nExceptions occurred. Details are as follows. \n{0}".format(e))
-		print("Please press the enter key to continue. ")
-		input()
-		flags[0] = None
 	return (addLists, removeLists, conflictLists, exceptionLists, differLists)
 
 def selectOperation(addFlag:bool, removeFlag:bool, differFlag:bool) -> int:
@@ -258,7 +200,7 @@ def doCompare(dir1:str, dir2:str, compareFileContent:bool = True, caseSensitive:
 		print("目标文件夹不存在：\"{0}\"\n请按回车键返回。".format(dir2))
 		input()
 		return None
-	elif dir1 == dir2 or not caseSensitive and dir1.upper() == dir2.upper():
+	elif dir1 == dir2 or not caseSensitive and dir1.lower() == dir2.lower():
 		print("源文件夹路径和目标文件夹路径相同，请按回车键返回。")
 		input()
 		return None
@@ -269,7 +211,7 @@ def doCompare(dir1:str, dir2:str, compareFileContent:bool = True, caseSensitive:
 		flags = [True]
 		addLists, removeLists, conflictLists, exceptionLists, differLists = compare(dir1, dir2, dir1, dir2, compareFileContent = compareFileContent, caseSensitive = caseSensitive, flags = flags)
 		if not flags[0]:
-			print("\nThe process is interrupted due to the above exception. " if flags[0] is None else "\nThe process is interrupted by users. ")
+			print("\nThe process is interrupted by users. ")
 		print()
 		print("addLists = {0}".format(addLists))
 		print("removeLists = {0}".format(removeLists))
@@ -310,9 +252,10 @@ def doCompare(dir1:str, dir2:str, compareFileContent:bool = True, caseSensitive:
 								f.write("Totally {0} added, {1} removed, and {2} different files. \n".format(len(addLists), len(removeLists), len(differLists)))
 							else:
 								f.write("Totally {0} added and {1} removed files. \n".format(len(addLists), len(removeLists)))
-						print("Successfully save to \"{0}\". ".format(fpath))
+						print("保存成功！")
 					except Exception as e:
-						print("Failed saving to \"{0}\". Details are as follows. \n{1}".format(fpath, e))
+						print("保存失败，异常信息如下：")
+						print(e)
 			elif choice == 8:
 				return doCompare(dir1, dir2, compareFileContent = compareFileContent, caseSensitive = caseSensitive, state = state)
 			elif choice == 9:
@@ -328,26 +271,15 @@ def doCompare(dir1:str, dir2:str, compareFileContent:bool = True, caseSensitive:
 					return None
 
 def main() -> int:
-	try:
-		state = [True]
-		while state[0]:
-			clearScreen()
-			sourcePath = input("请输入源文件夹路径：").replace("\"", "")
-			targetPath = input("请输入目标文件夹路径：").replace("\"", "")
-			compareFileContent = input("请选择是否需要比较文件内容（输入“Y”表示“是”）：").upper() in ("1", "Y")
-			caseSensitive = input("请选择大小写是否敏感（输入“Y”表示“是”）：").upper() in ("1", "Y")
-			bRet = doCompare(sourcePath, targetPath, compareFileContent = compareFileContent, caseSensitive = caseSensitive, state = state)
+	state = [True]
+	while state[0]:
+		sourcePath = input("请输入源文件夹路径：").replace("\"", "")
+		targetPath = input("请输入目标文件夹路径：").replace("\"", "")
+		compareFileContent = input("请选择是否需要比较文件内容（输入“Y”表示“是”）：").upper() in ("1", "Y")
+		caseSensitive = input("请选择大小写是否敏感（输入“Y”表示“是”）：").upper() in ("1", "Y")
+		bRet = doCompare(sourcePath, targetPath, compareFileContent = compareFileContent, caseSensitive = caseSensitive, state = state)
 		clearScreen()
-		return EXIT_SUCCESS if bRet else EXIT_FAILURE
-	except Exception as e:
-		try:
-			print("Unexpected exceptions occurred in the main function. Details are as follows. \n{0}\nPlease press the enter key to exit. ".format(e))
-			input()
-			clearScreen()
-		except:
-			pass
-		finally:
-			return EOF
+	return EXIT_SUCCESS if bRet else EXIT_FAILURE
 
 
 
