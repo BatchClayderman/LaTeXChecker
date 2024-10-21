@@ -158,7 +158,7 @@ class PointerNode:
 		else:
 			return False
 	def getCurrentChar(self:object) -> str:
-		return self.__currentPointerNode.getCurrentChar() if self.isInitialized() else None
+		return self.__lines[self.__lineIdx][self.__charIdx] if self.isInitialized() and 0 <= self.__lineIdx < len(self.__lines) and 0 <= self.__charIdx < len(self.__lines[self.__lineIdx]) else None
 	def getCurrentLocation(self:object) -> tuple:
 		return (self.__filePath, self.__lineIdx, self.__charIdx) if self.isInitialized() else None
 	def getNextChar(self:object, offset:int = 1, lineSwitch:bool = True) -> str:
@@ -321,7 +321,7 @@ class Pointer:
 			while stack:
 				node = stack.pop()
 				if node.nextChar(requiredOffset, lineSwitch):
-					selfl.__pointerNodeStack = stack
+					self.__pointerNodeStack = stack
 					return True
 				else:
 					requiredOffset -= node.getRemainingRequiredCount()
@@ -522,12 +522,14 @@ class Checker:
 			return False
 		isLeftPart = True # indicate the "$" or "$$" got is the left part or not
 		while self.__pointer.hasNextChar():
-			if not self.__pointer.hasNextChar(lineSwithc = False):
+			if not self.__pointer.hasNextChar(lineSwitch = False): # if there is not a character following the current character in this line
 				self.__structure.addPlainText("\n")
-				self.__pointer.nextLine()
+				self.__pointer.nextLine() # switch to the next line
 				continue
 			self.__pointer.nextChar()
 			ch = self.__pointer.getCurrentChar()
+			print(ch)
+			input(ch)
 			if "\\" == ch:
 				if self.__pointer.getNextChar(3, False) == "end" or self.__pointer.getNextChar(5, False) == "begin":
 					isBeginner = self.__pointer.getNextChar(1, False) == "b" # to speed up
@@ -745,7 +747,7 @@ def main() -> int:
 		preExit()
 		return EXIT_SUCCESS if not any(processPool) else EXIT_FAILURE
 	else:
-		checker = Checker(argv[1] if len(argv) == 2 else None)
+		checker = Checker(argv[1] if 2 == len(argv) else None)
 		checker.setup()
 		checker.printPointer()
 		checker.printStructure()
