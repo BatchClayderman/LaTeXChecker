@@ -32,6 +32,10 @@ Compared with ``v1.3``, the codes are more readable and the thought is more feas
 
 This version of the script cannot run. It acts as a thought provider here. 
 
+### v1.7
+
+This is the first version for handling complex structures that can be executed directly. 
+
 ## LaTeXChecker (LaTeXChecker v2.0)
 
 This is the initial version of ``LaTeXChecker.py`` that supports complex structures with understanding the LaTeX files. 
