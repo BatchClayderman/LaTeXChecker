@@ -34,7 +34,7 @@ This version of the script cannot run. It acts as a thought provider here.
 
 ### v1.7
 
-This is the first version for handling complex structures that can be executed directly. 
+This is a version of the mature structure-building idea, which has some bugs in implementation. 
 
 ## LaTeXChecker (LaTeXChecker v2.0)
 
