@@ -34,7 +34,9 @@ This version of the script cannot run. It acts as a thought provider here.
 
 ### v1.7
 
-This is a version of the mature structure-building idea, which has some bugs in implementation. 
+This is the last version before v2.0, which leads to the mature structure-building idea. 
+
+The active mode is used in the parsing with the character-by-character reading. 
 
 ## LaTeXChecker (LaTeXChecker v2.0)
 
