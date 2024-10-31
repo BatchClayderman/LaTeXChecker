@@ -66,7 +66,6 @@ class DebugLevel:
 		return bool(self.value)
 	def __int__(self:object) -> int:
 		return self.value
-
 	def __str__(self:object) -> str:
 		return str(self.symbol)
 Prompt = DebugLevel({"character":"P", "name":"Prompt", "symbol":"[P]", "value":100})
