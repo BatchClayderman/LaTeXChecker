@@ -479,6 +479,9 @@ class Checker:
 									self.__pointer.nextChar(fileSwitch = False) # for printing purposes
 									self.__print("A command should only contain letters but it does not at {0}. ".format(self.__pointer.getCurrentLocationDescription()), Error)
 									return False
+								else: # e.g. "\\%" (absorb the next character)
+									self.__pointer.nextChar(fileSwitch = False)
+									self.__structure.addStructureNode("\\" + self.__pointer.getCurrentChar())
 							elif "\\documentclass" == buffer:
 								if self.__structure.addStructureNode(buffer):
 									self.__print("A new structure node [{0}] is added. ".format(self.__structure.getCurrentStructureNodeDescription()), Debug)
@@ -547,9 +550,9 @@ class Checker:
 								self.__structure.addPlainText(buffer)
 					else: # "\\\n"
 						self.__structure.addPlainText("\\")
-				elif "%" == ch: # the '\\' will be absorted in the codes for avoiding "\\%" above if the previous char is '\\'
+				elif "%" == ch: # the '\\' will be absorbed in the codes for avoiding "\\%" above if the previous char is '\\'
 					self.__pointer.nextLine()
-				elif "$" == ch: # the '\\' will be absorted in the codes for avoiding "\\$" above if the previous char is '\\'
+				elif "$" == ch: # the '\\' will be absorbed in the codes for avoiding "\\$" above if the previous char is '\\'
 					if self.__pointer.hasNextChar(fileSwitch = False) and "$" == self.__pointer.getNextChar(fileSwitch = False):
 						self.__pointer.nextChar(fileSwitch = False)
 						ch = "$$" # else: ch = "$"
