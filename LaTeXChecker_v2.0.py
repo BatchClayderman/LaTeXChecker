@@ -62,6 +62,11 @@ class DebugLevel:
 			return self.value >= other
 		else:
 			raise TypeError("TypeError: '>=' not supported between instances of '{0}' and '{1}'".format(type(self), type(other)))
+	def __bool__(self:object) -> bool:
+		return bool(self.value)
+	def __int__(self:object) -> int:
+		return self.value
+
 	def __str__(self:object) -> str:
 		return str(self.symbol)
 Prompt = DebugLevel({"character":"P", "name":"Prompt", "symbol":"[P]", "value":100})
@@ -69,7 +74,7 @@ Critical = DebugLevel({"character":"C", "name":"Critical", "symbol":"[C]", "valu
 Error = DebugLevel({"character":"E", "name":"Error", "symbol":"[E]", "value":40})
 Warning = DebugLevel({"character":"W", "name":"Warning", "symbol":"[W]", "value":30})
 Info = DebugLevel({"character":"I", "name":"Info", "symbol":"[I]", "value":20})
-Debug = DebugLevel({"character":"D", "name":"Info", "symbol":"[D]", "value":10})
+Debug = DebugLevel({"character":"D", "name":"Debug", "symbol":"[D]", "value":10})
 
 class PointerNode:
 	def __init__(self:object, filePath:str, parentPointerNode:object = None) -> object:
