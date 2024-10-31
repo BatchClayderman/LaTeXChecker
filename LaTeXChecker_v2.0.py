@@ -684,12 +684,12 @@ def main() -> int:
 	clearScreen()
 	if len(argv) > 2:
 		processPool = [os.system(STARTUP_COMMAND_FORMAT.format(executable, __file__, mainTexPath)) for mainTexPath in argv[1:]]
-		print(													\
-			"As multiple options were given, {0} child processes have been launched, where {1} succeeded and {2} failed. ".format(	\
-				len(processPool), 										\
-				processPool.count(EXIT_SUCCESS), 								\
-				len(processPool) - processPool.count(EXIT_SUCCESS)						\
-			)												\
+		print(																															\
+			"As multiple options were given, {0} child processes have been launched, where {1} succeeded and {2} failed. ".format(		\
+				len(processPool), 																										\
+				processPool.count(EXIT_SUCCESS), 																						\
+				len(processPool) - processPool.count(EXIT_SUCCESS)																		\
+			)																															\
 		)
 		preExit()
 		return EXIT_SUCCESS if not any(processPool) else EXIT_FAILURE
