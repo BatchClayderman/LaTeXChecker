@@ -4,7 +4,7 @@ This is an implementation for checking LaTeX source files in the mode of multipl
 
 ## checkCite.py (LaTeXChecker v1.0)
 
-This script is used to check the LaTeX files without understanding the LaTeX files. 
+This script is used to check the LaTeX files without understanding them. 
 
 This script will no longer be under maintenance. 
 
@@ -38,6 +38,18 @@ This is the last version before v2.0, which leads to the mature structure-buildi
 
 The active mode is used in the parsing with the character-by-character reading. 
 
-## LaTeXChecker (LaTeXChecker v2.0)
+## LaTeXChecker (LaTeXChecker v2.0 - v2.9)
+
+Start to be a mature checker with file tracking and structure recognition. 
+
+### 2.0
 
 This is the initial version of ``LaTeXChecker.py`` that supports complex structures with understanding the LaTeX files. 
+
+### 2.1
+
+Interaction is accomplished in this version. 
+
+Initial support to command definitions is added. 
+
+More complex situations are considered during the resolution. 
