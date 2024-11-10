@@ -42,11 +42,11 @@ The active mode is used in the parsing with the character-by-character reading.
 
 Start to be a mature checker with file tracking and structure recognition. 
 
-### 2.0
+### v2.0
 
 This is the initial version of ``LaTeXChecker.py`` that supports complex structures with understanding the LaTeX files. 
 
-### 2.1
+### v2.1
 
 Interaction is accomplished in this version. 
 
@@ -54,7 +54,7 @@ Initial support to command definitions is added.
 
 More complex situations are considered during the resolution. 
 
-### 2.3
+### v2.3
 
 Add support for label and citation checking, covering parts of the functions in LaTeXChecker v1.0. 
 
