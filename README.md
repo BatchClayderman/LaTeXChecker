@@ -53,3 +53,11 @@ Interaction is accomplished in this version.
 Initial support to command definitions is added. 
 
 More complex situations are considered during the resolution. 
+
+### 2.3
+
+Add support for label and citation checking, covering parts of the functions in LaTeXChecker v1.0. 
+
+Fix bugs in the stack of the pointer. 
+
+Support more commands. 
