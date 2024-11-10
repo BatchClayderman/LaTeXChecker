@@ -523,7 +523,7 @@ class Checker:
 				if ch in d:
 					vec[i] = d[ch]
 				elif not ch.isprintable():
-					vec[i] = "\\u" + chr(ch).zfill(4)
+					vec[i] = "\\x" + hex(ord(ch))[2:]
 			return "".join(vec)
 		else:
 			return str(string)
