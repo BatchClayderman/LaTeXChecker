@@ -54,9 +54,16 @@ Initial support to command definitions is added.
 
 More complex situations are considered during the resolution. 
 
-### v2.3
+### v2.3 (20241111)
 
 Add support for label and citation checking, covering parts of the functions in LaTeXChecker v1.0. 
+
+### v2.4 (20241112)
+
+Cover all the checking functions in LaTeXChecker v1.0. 
+
+Add support to check whether all the structures are closed. 
+
 
 Fix bugs in the stack of the pointer. 
 
