@@ -64,7 +64,16 @@ Cover all the checking functions in LaTeXChecker v1.0.
 
 Add support to check whether all the structures are closed. 
 
-
 Fix bugs in the stack of the pointer. 
 
 Support more commands. 
+
+### v2.5 (20241116)
+
+Adjust the style of the connection lines. 
+
+Fix some bugs. 
+
+Change the behaviors for ``.gv`` files. Revise the extension ``.gz`` to ``.gv``. 
+
+Change the option recognition mode to the non-case-sensitive one. 
