@@ -1166,7 +1166,7 @@ class Checker:
 													if self.__pointer.hasNextLine():
 														self.__pointer.nextLine()
 													else:
-														self.__print("An EOF signal is reported while scanning a new defined environment after an annotation symbol at {0}. ".format(self.__pointer.getCurrentLocationDescription()), Error)
+														self.__print("An EOF signal is reported while scanning a newly defined environment after an annotation symbol at {0}. ".format(self.__pointer.getCurrentLocationDescription()), Error)
 														return False
 												elif "\\" == ch:
 													if self.__pointer.hasNextChar():
@@ -1174,12 +1174,12 @@ class Checker:
 													elif self.__pointer.hasNextLine():
 														self.__pointer.nextLine()
 													else:
-														self.__print("An EOF signal is reported while scanning the escaped character of a new defined environment at {0}. ".format(self.__pointer.getCurrentLocationDescription()), Error)
+														self.__print("An EOF signal is reported while scanning the escaped character of a newly defined environment at {0}. ".format(self.__pointer.getCurrentLocationDescription()), Error)
 														return False
 											elif self.__pointer.hasNextLine():
 												self.__pointer.nextLine()
 											else:
-												self.__print("An EOF signal is reported while scanning a new defined environment at {0}. ".format(self.__pointer.getCurrentLocationDescription()), Error)
+												self.__print("An EOF signal is reported while scanning a newly defined environment at {0}. ".format(self.__pointer.getCurrentLocationDescription()), Error)
 												return False
 								self.__print("A new environment \"{0}\" is added. ".format(environmentName), Debug)
 							else: # the command is not special
