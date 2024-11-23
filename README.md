@@ -77,3 +77,11 @@ Fix some bugs.
 Change the behaviors for ``.gv`` files. Revise the extension ``.gz`` to ``.gv``. 
 
 Change the option recognition mode to the non-case-sensitive one. 
+
+### v2.6 (20241124)
+
+Fix the bug of using ``\end{document}`` to end sections and subsections. 
+
+Print the information on the leaving structure node mentioned above for debugging information via a queue. 
+
+Add support for newly defined environments. 
