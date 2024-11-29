@@ -85,3 +85,7 @@ Fix the bug of using ``\end{document}`` to end sections and subsections.
 Print the information on the leaving structure node mentioned above for debugging information via a queue. 
 
 Add support for newly defined environments. 
+
+### v2.7 (20241130)
+
+Formalize the main body ``\xxx{yyy}`` recognition. 
