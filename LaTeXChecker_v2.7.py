@@ -567,10 +567,9 @@ class Checker:
 		if "{" == self.__pointer.getNextChar(fileSwitch = fileSwitch):
 			layer, mainBody = 1, "{"
 			self.__pointer.nextChar(fileSwitch = fileSwitch)
-			while layer:
+			while True:
 				if self.__pointer.hasNextChar(fileSwitch = fileSwitch):
-					self.__pointer.nextChar(fileSwitch = fileSwitch)
-					ch = self.__pointer.getCurrentChar()
+					ch = self.__pointer.getNextChar(fileSwitch = fileSwitch)
 					mainBody += ch
 					if "\\" == ch:
 						if self.__pointer.hasNextChar(fileSwitch = fileSwitch):
@@ -586,6 +585,15 @@ class Checker:
 						layer += 1
 					elif "}" == ch:
 						layer -= 1
+						if 0 == layer:
+							break
+					elif "%" == ch:
+						if self.__pointer.hasNextLine(fileSwitch = fileSwitch):
+							self.__pointer.nextLine(fileSwitch = fileSwitch)
+						else:
+							self.__print("There are not following lines after the \"%\" symbol at {0}. ".format(self.__pointer.getCurrentLocationDescription()), Error)
+							return False
+					self.__pointer.nextChar(fileSwitch = fileSwitch)
 				elif self.__pointer.hasNextLine(fileSwitch = fileSwitch):
 					self.__pointer.nextLine(fileSwitch = fileSwitch)
 					mainBody += "\n"
@@ -726,6 +734,8 @@ class Checker:
 												return False
 											self.__pointer.nextChar()
 											ch = self.__pointer.getCurrentChar()
+											print(ch)
+											input()
 											if "{" == ch:
 												layerCount = 1
 												while layerCount:
