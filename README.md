@@ -1,20 +1,26 @@
 # LaTeXChecker
 
-This is an implementation for checking LaTeX source files in the mode of multiple typesetting styles for one manuscript. 
+This is an implementation for checking LaTeX source files using multiple typesetting styles for one manuscript. 
+
+None of the versions of the script modify any LaTeX source files. They run in read-only mode. 
 
 ## checkCite.py (LaTeXChecker v1.0)
 
 This script is used to check the LaTeX files without understanding them. 
 
-This script will no longer be under maintenance. 
+This script will no longer be under maintenance.
 
-Please use the later versions. 
+You can still use this version to handle the situation where the input is a folder if you wish to. 
+
+Otherwise, please always use the latest version among all the afterward versions where the input is the main TEX file. 
 
 ## checkLaTeX.py (LaTeXChecker v1.1 - v1.9)
 
 This script is used to check the LaTeX files, supporting complex structures. 
 
 Here are some incomplete implementations based on baseline ideas. 
+
+Starting from ``v1.1``, the input should be the main TEX file instead of a folder. 
 
 ### v1.3
 
@@ -89,3 +95,15 @@ Add support for newly defined environments.
 ### v2.7 (20241130)
 
 Formalize the main body ``\xxx{yyy}`` recognition. 
+
+### v2.8 (20241227)
+
+Merry Christmas! 
+
+The calculation of the number of references per paper, section, subsection, and subsubsection is added. 
+
+Thanks to [@yiyistudy](https://github.com/yiyistudy) for providing the idea of adding an extendable dictionary to accomplish the calculation. 
+
+This update is debugged once and successfully passed after it was written, marking the implementation of all features in ``v1.0``. 
+
+The logic of selecting a main TEX file in a folder containing multiple TEX files is adjusted. 
