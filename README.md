@@ -2,17 +2,25 @@
 
 This is an implementation for checking LaTeX source files using multiple typesetting styles for one manuscript. 
 
-None of the versions of the script modify any LaTeX source files. They run in read-only mode. 
+None of the versions earlier than ``v3.0`` of the script will modify any LaTeX source files, which run in read-only mode. 
+
+| Version range | Major feature | Recommended version |
+| --- | --- | --- |
+| [``v0.0``, ``v1.0``] | The input is a folder while the script runs in read-only mode. | ``v1.0`` |
+| (``v1.0``, ``v3.0``) | The input is the main TEX file while the script runs in read-only mode. | ``v2.8`` |
+| ``v3.0`` | The input is the main TEX file while the script has modification behaviors.  | ``v3.0`` |
 
 ## checkCite.py (LaTeXChecker v1.0)
 
 This script is used to check the LaTeX files without understanding them. 
 
-This script will no longer be under maintenance.
+The script will parse them using string search and regular expressions after reading all the TEX files in the target folder. 
 
-You can still use this version to handle the situation where the input is a folder if you wish to. 
+This script will no longer be under maintenance. 
 
-Otherwise, please always use the latest version among all the afterward versions where the input is the main TEX file. 
+You can still use this version of the script to handle the situation where the input is a folder if you wish to. 
+
+Otherwise, it is recommended to use the latest version among all the afterward versions where the input is the main TEX file. 
 
 ## checkLaTeX.py (LaTeXChecker v1.1 - v1.9)
 
@@ -107,5 +115,11 @@ Thanks to [@yiyistudy](https://github.com/yiyistudy) for providing the idea of a
 This update is debugged once and successfully passed after it was written, marking the implementation of all features in ``v1.0``. 
 
 The logic of selecting a main TEX file in a folder containing multiple TEX files is adjusted. 
+
+## LaTeXChecker (LaTeXChecker v3.0 - v3.9)
+
+Starting from ``v3.0``, the script will have some functions
+
+
 
 ![screenshot.png](screenshot.png)
