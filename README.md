@@ -2,8 +2,6 @@
 
 This is an implementation for checking LaTeX source files using multiple typesetting styles for one manuscript. 
 
-None of the versions earlier than ``v3.0`` of the script will modify any LaTeX source files, which run in read-only mode. 
-
 | Version range | Major feature | Recommended version |
 | --- | --- | --- |
 | [``v0.0``, ``v1.0``] | The input is a folder while the script runs in read-only mode. | ``v1.0`` |
@@ -12,23 +10,21 @@ None of the versions earlier than ``v3.0`` of the script will modify any LaTeX s
 
 ## checkCite.py (LaTeXChecker v1.0)
 
-This script is used to check the LaTeX files without understanding them. 
+This version of the script is used to check the LaTeX files without understanding them. 
 
-The script will parse them using string search and regular expressions after reading all the TEX files in the target folder. 
+The version will parse them using string search and regular expressions after reading all the TEX files in the target folder. 
 
-This script will no longer be under maintenance. 
+Since this version will no longer be under maintenance, it is recommended to use the latest version where the input is the main TEX file. 
 
-You can still use this version of the script to handle the situation where the input is a folder if you wish to. 
+You can still use this version of the script that may contain potential errors to handle the situation where the input is a folder if you wish to. 
 
-Otherwise, it is recommended to use the latest version among all the afterward versions where the input is the main TEX file. 
+## checkLaTeX.py (LaTeXChecker (``v1.0``, ``v2.0``))
 
-## checkLaTeX.py (LaTeXChecker v1.1 - v1.9)
+These versions of the script are used to check the LaTeX files with the main TEX file as the input, supporting complex structures. 
 
-This script is used to check the LaTeX files, supporting complex structures. 
+Starting from these versions, the input should be the main TEX file instead of a folder. 
 
-Here are some incomplete implementations based on baseline ideas. 
-
-Starting from ``v1.1``, the input should be the main TEX file instead of a folder. 
+Here are some incomplete implementations based on some baseline ideas. 
 
 ### v1.3
 
@@ -52,7 +48,7 @@ This is the last version before v2.0, which leads to the mature structure-buildi
 
 The active mode is used in the parsing with the character-by-character reading. 
 
-## LaTeXChecker (LaTeXChecker v2.0 - v2.9)
+## LaTeXChecker (LaTeXChecker [``v2.0``, ``v3.0``))
 
 Start to be a mature checker with file tracking and structure recognition. 
 
@@ -116,10 +112,20 @@ This update is debugged once and successfully passed after it was written, marki
 
 The logic of selecting a main TEX file in a folder containing multiple TEX files is adjusted. 
 
-## LaTeXChecker (LaTeXChecker v3.0 - v3.9)
+## LaTeXChecker (LaTeXChecker [``v3.0``, ``v4.0``))
 
-Starting from ``v3.0``, the script will have some functions
+Starting from ``v3.0``, the script will have some functions that may modify the LaTeX source files. 
 
+If you are afraid of the modification, please use the versions earlier than ``v3.0``. 
 
+### v3.0 (20241228)
+
+Happy New Year! 
+
+Added the compilation operations. 
+
+Detecting and modifying ``cas-common.sty`` are supported, which can uniform the font of the text in figure captions and tables to "Times New Roman". 
+
+The ``bytes`` type is used to replace all the b"\\sffamily" with b"\\rmfamily" to ignore the encoding and decoding issue. 
 
 ![screenshot.png](screenshot.png)
