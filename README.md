@@ -107,3 +107,5 @@ Thanks to [@yiyistudy](https://github.com/yiyistudy) for providing the idea of a
 This update is debugged once and successfully passed after it was written, marking the implementation of all features in ``v1.0``. 
 
 The logic of selecting a main TEX file in a folder containing multiple TEX files is adjusted. 
+
+![screenshot.png](screenshot.png)
