@@ -128,4 +128,8 @@ Detecting and modifying ``cas-common.sty`` are supported, which can uniform the 
 
 The ``bytes`` type is used to replace all the b"\\sffamily" with b"\\rmfamily" to ignore the encoding and decoding issue. 
 
+### v3.1 (20250116)
+
+The logic of some functions was updated. 
+
 ![screenshot.png](screenshot.png)
