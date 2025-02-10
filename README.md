@@ -1,6 +1,6 @@
 # LaTeXChecker
 
-This is an implementation for checking LaTeX source files using multiple typesetting styles for one manuscript. 
+This is an implementation for checking LaTeX source files using [multiple typesetting styles for one manuscript](https://github.com/BatchClayderman/onePaperMultipleTypesettingStyles). 
 
 | Version range | Major feature | Recommended version |
 | --- | --- | --- |
