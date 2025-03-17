@@ -132,4 +132,10 @@ The ``bytes`` type is used to replace all the b"\\sffamily" with b"\\rmfamily" t
 
 The logic of some functions was updated. 
 
+### v3.2 (20250317)
+
+Support multiple typesetting styles for one paper more friendly. 
+
+## Screenshot(s)
+
 ![screenshot.png](screenshot.png)
