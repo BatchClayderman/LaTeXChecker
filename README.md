@@ -6,7 +6,7 @@ This is an implementation for checking LaTeX source files using [multiple typese
 | --- | --- | --- |
 | [``v0.0``, ``v1.0``] | The input is a folder while the script runs in read-only mode. | ``v1.0`` |
 | (``v1.0``, ``v3.0``) | The input is the main TEX file while the script runs in read-only mode. | ``v2.8`` |
-| [``v3.0``, ``v3.2``] | The input is the main TEX file while the script has modification behaviors.  | ``v3.2`` |
+| [``v3.0``, ``v4.0``) | The input is the main TEX file while the script has modification behaviors.  | ``v3.2`` |
 
 ## checkCite.py (LaTeXChecker v1.0)
 
