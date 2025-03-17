@@ -134,7 +134,13 @@ The logic of some functions was updated.
 
 ### v3.2 (20250317)
 
-Support multiple typesetting styles for one paper more friendly. 
+Supported multiple typesetting styles for one paper in a more friendly way. 
+
+Supported preset workflows and manual pausing. 
+
+Supported ``\let`` and ``\orignewcommand`` commands, with making one command equal to another one adapted. 
+
+Fixed some potential bugs. 
 
 ## Screenshot(s)
 
