@@ -145,3 +145,18 @@ Fixed some potential bugs.
 ## Screenshot(s)
 
 ![screenshot.png](screenshot.png)
+
+## Citation
+
+If you wish to cite this work, please use the following BibTeX. 
+
+```
+@inproceedings{liu2024efficient,
+  title={An efficient information retrieval and tracking algorithm for multiple typesetting styles of the same paper},
+  author={Liu, Yingying and Li, Yuan and Tang, Jiyue and Ji, Tong and Xu, Xiaoyu and Luo, Yuxin and Lin, Yifeng and Yang, Yuer and Wu, Yubing},
+  booktitle={2024 7th International Conference on Data Science and Information Technology (DSIT)},
+  pages={1--6},
+  year={2024},
+  organization={IEEE}
+}
+```
