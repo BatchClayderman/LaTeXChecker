@@ -138,7 +138,13 @@ Supported multiple typesetting styles for one paper in a more friendly way.
 
 Supported preset workflows and manual pausing. 
 
-Supported ``\let`` and ``\orignewcommand`` commands, with making one command equal to another one adapted. 
+Supported ``\let`` and ``\orignewcommand`` commands by making one command equal to another one already adapted. 
+
+Fixed some potential bugs. 
+
+### v3.3 (20250524)
+
+Supported checking non-English characters during parsing. 
 
 Fixed some potential bugs. 
 
